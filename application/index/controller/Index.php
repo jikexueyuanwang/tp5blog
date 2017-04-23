@@ -7,7 +7,6 @@ class Index extends Base
 {
     public function index()
     {
-        echo time();
         return $this->fetch();
     }
 }

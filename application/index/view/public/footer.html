@@ -1,0 +1,56 @@
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="__STATIC__/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(function(){
+        // 用户注册提交
+        $('.reg_btn').click(function(){
+
+            $.ajax({
+                type: 'post',
+                url: "{:url('index/user/add')}",
+                data: $(".reg_form").serialize(),
+                success: function(data) {
+                    if(data.status)
+                    {
+                        $('.err_tips').html(data.msg);
+                        setTimeout(function(){
+                            window.location.href = "{:url('index/user/login')}";
+                        },1000);
+                    }
+                    else
+                    {
+                        $('.err_tips').html(data.msg);
+                    }
+                }
+            });
+        });
+
+        // 用户登录
+        $('.login_btn').click(function(){
+
+            $.ajax({
+                type: 'post',
+                url: "{:url('index/user/doLogin')}",
+                data: $(".login_form").serialize(),
+                success: function(data) {
+                    console.log(data);
+                    if(data.status)
+                    {
+                        $('.err_tips').html(data.msg);
+                        setTimeout(function(){
+                            window.location.href = "{:url('index/user/index')}";
+                        },1000);
+                    }
+                    else
+                    {
+                        $('.err_tips').html(data.msg);
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>
