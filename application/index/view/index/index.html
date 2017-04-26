@@ -1,16 +1,44 @@
-{include file="public:header,public:nav"/}
+{include file="public/header,public/nav"}
+
 <div class="container">
+
     <div class="row">
+
         <div class="col-md-8">
             <div class="page-header">
-                <h3>全部文章</h3>
+                <h3>{$page_header|default='全部文章'}</h3>
             </div>
-            <div class="doc_list">
-                文章的列表内容区域
+            {empty name="_list"}
+            <h4 style="width: 100%;min-height: 500px;line-height: 500px;text-align: center;">
+                暂无结果
+            </h4>
+            {else /}
+
+            {volist name="_list" id="vo"}
+            <div class="blog-content">
+                <img class="img-rounded" src="/tp5blog/public/uploads/{$vo.img_path}"
+                     style="margin-right: 10px;float: left;width: 100px;"/>
+                <div class="content-detail" style="float: left;width: 80%">
+                    <h4><a href="{:url('index/index/detail',array('id'=>$vo['id']))}">{$vo.title}</a></h4>
+                    <p>作者：{$vo.uid|getUserName}&nbsp;&nbsp;
+                        发布时间：{$vo.create_time|date='Y-m-d',###}&nbsp;&nbsp;
+                        点击量：{$vo.pv}
+                    </p>
+                    <div>{:getDocBody($vo['content'])}</div>
+                    <hr/>
+                </div>
+
+                <div style="clear:both"></div>
             </div>
+            {/volist}
+
+            {$_list->render()}
+
+            {/empty}
+
         </div>
-        {include file="public:right"/}
+        {include file="public/right"}
     </div>
 </div>
 
-{include file="public:footer"/}
+{include file="public/footer"}

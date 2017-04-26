@@ -236,4 +236,13 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+    // 状态类型
+    'STATUS_LIST' => [ -1 =>'删除',0=>'禁用',1=>'正常'],
+
+    // 博客名称
+    'BLOG_NAME' => 'MyTP5Blog',
+
+    // 每页的分页条数
+    'PAGE_NUM_SET' => 2,
 ];

@@ -14,16 +14,25 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active" ><a href="#">全部</a></li>
-                <li ><a href="#">分类1</a></li>
-                <li ><a href="#">分类2</a></li>
+                <li
+                    {if condition="!$category_id"}
+                    class="active"
+                    {/if}
+                ><a href="{url('index')}">全部文章</a></li>
+                {volist name="menus" id="vo"}
+                    <li
+                    {if condition="$vo['id'] eq $category_id"}
+                    class="active"
+                    {/if}
+                    ><a href="{:url('index/index',array('category_id'=>$vo['id']))}">{$vo.name}</a></li>
+                {/volist}
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <form action="{:url('index')}" method="get" class="navbar-form navbar-left">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="请输入你的关键字">
+                            <input name="keywords" type="text" class="form-control" placeholder="请输入你的关键字">
                         </div>
                         <button type="submit" class="btn btn-default">搜索</button>
                     </form>
@@ -32,7 +41,7 @@
                     <li class=""><a href="{:url('User/login')}">登录</a></li>
                     <li><a href="{:url('User/reg')}">注册</a></li>
                 {else/}
-                    <li class=""><a href="{:url('User/login')}">发布文章</a></li>
+                    <li class=""><a href="{:url('Index/add')}">发布文章</a></li>
                     <li><a href="{:url('User/index')}">
                         {:session('user_info.username')}
                     </a>
