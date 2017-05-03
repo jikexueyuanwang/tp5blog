@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use app\common\controller\Base;
 use app\common\model\Document;
+use app\common\model\DocumentComments;
 use think\Db;
 
 class Index extends Base
@@ -30,9 +31,16 @@ class Index extends Base
             $page_header = '分类名称：'. getCategoryName($category_id);
         }
 
+        // 展示当天的数据
+        $publish_date = input('param.publish_date');
+        if($publish_date)
+        {
+            $map['create_time'] = ['between' , [strtotime($publish_date),strtotime($publish_date) + (60 * 60 * 24)]];
+            $page_header = "时间：" . $publish_date;
+        }
+
 
         // 基本的文章列表查询
-
         $lists = Db::name('document')
             ->where($map)
             ->order('create_time' , 'desc')
@@ -84,6 +92,11 @@ class Index extends Base
 
         // 每次pv+1
         Db::name('document')->where($map)->setInc('pv');
+
+        $this->assign('comment_list' , Db::name('document_comments')
+            ->where(['document_id'=>$info['id'] , 'status'=>1])
+            ->order('create_time','desc')
+            ->select());
 
         $this->assign('info' ,$info);
         $this->assign('title' , '详情页-'.$info['title']);
@@ -187,5 +200,58 @@ class Index extends Base
             $this->success('保存成功',url('index/index/index'));
         }
         $this->error('参数错误！');
+    }
+
+    // 发布评论
+    public function add_comment()
+    {
+        $model = new DocumentComments();
+
+        // 5秒内不能重复发 cookie
+        $c_name = 'doc_' . USER_ID . '_' . input('param.document_id');
+        if(cookie($c_name))
+        {
+            if(time() - cookie($c_name) < 5)
+            {
+                return ['status'=>0,'msg'=>'发布评论间隔时间太短！'];
+            }
+            else
+            {
+                cookie($c_name , time(), time() + 60);
+            }
+        }
+        else
+        {
+            cookie($c_name , time(), time() + 60);
+        }
+
+        if($model->allowField(true)->validate(true)->save(input('post.')))
+        {
+            return ['status'=>1,'msg'=>'发布评论成功'];
+        }
+        else
+        {
+            return ['status'=>0,'msg'=>$model->getError()];
+        }
+    }
+
+    // ajax加载评论的列表
+    public function getDocCommentList()
+    {
+        if(request()->isAjax())
+        {
+            $page_set = [
+                'type'      => 'bootstrap',
+                'var_page'  => 'page',
+                'list_rows' => 5,
+                'path' => url('detail' , array('id'=>input('param.doc_id')))
+            ];
+            $this->assign('comment_list' , Db::name('document_comments')
+                ->where(['document_id'=>input('param.doc_id') , 'status'=>1])
+                ->order('create_time','desc')
+                ->paginate($page_set));
+        }
+
+        return $this->fetch();
     }
 }

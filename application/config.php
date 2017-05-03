@@ -245,4 +245,7 @@ return [
 
     // 每页的分页条数
     'PAGE_NUM_SET' => 2,
+
+    // 超管id
+    'ADMIN_ID' => 19,
 ];

@@ -2,7 +2,9 @@
     <div class="page-header">
         <h3>热门动态</h3>
     </div>
-    <ul class="">
-        <li><a href="#">显示一些热门动态的标题</a></li>
+    <ul class="list-group">
+        {volist name="doc_time_list" id="vo"}
+        <li><a href="{:url('index/index/index',array('publish_date'=>$vo['publish_date']))}">{$vo.publish_date}&nbsp;({$vo.doc_num})</a></li>
+        {/volist}
     </ul>
 </div>

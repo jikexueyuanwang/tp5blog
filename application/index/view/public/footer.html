@@ -109,14 +109,17 @@
 
         // 发表评论
         $('.submit_comment').click(function(){
+            var doc_id = $(".comment_form").find('input[name="document_id"]').val();
             $.ajax({
                 type: 'post',
                 url: "{:url('index/index/add_comment')}",
                 data: $(".comment_form").serialize(),
                 success: function(data) {
-                    if(data.status)
+                    if(data.status == 1)
                     {
                         $('.err_tips').html(data.msg);
+                        // 更新评论的列表
+                        loadCommentList(doc_id);
                     }
                     else
                     {
